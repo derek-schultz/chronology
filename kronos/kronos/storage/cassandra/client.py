@@ -93,7 +93,7 @@ class CassandraStorage(BaseStorage):
     """
     Delete events for `stream` between `start_id` and `end_time`.
     `stream` : The stream to delete events for.
-    `start_id` : Delete events with id > `start_id`.
+    `start_id` : Delete events with id >= `start_id`.
     `end_time` : Delete events ending <= `end_time`.
     `configuration` : A dictionary of settings to override any default
                       settings, such as number of shards or width of a

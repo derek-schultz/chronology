@@ -302,8 +302,6 @@ class Stream(object):
                           shard['shard'], False,
                           MAX_LIMIT, read_size=self.read_size)
       for _id in shard.ids_iterator(start_id, end_id):
-        if _id == start_id:
-          continue
         num_deleted += 1
         batch_stmt.add(BoundStatement(self.namespace.DELETE_STMT,
                                       routing_key=shard.key,

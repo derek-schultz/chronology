@@ -246,7 +246,7 @@ class ElasticSearchStorage(BaseStorage):
 
   def _delete(self, namespace, stream, start_id, end_time, configuration):
     """
-    Delete events with id > `start_id` and end_time <= `end_time`.
+    Delete events with id >= `start_id` and end_time <= `end_time`.
     """
     start_time = uuid_to_kronos_time(start_id)
     body_query = {
@@ -257,7 +257,7 @@ class ElasticSearchStorage(BaseStorage):
             'bool': {
               'should': [
                 {
-                  'range': {TIMESTAMP_FIELD: {'gt': start_time,
+                  'range': {TIMESTAMP_FIELD: {'gte': start_time,
                                               'lte': end_time}}
                 },
                 {
