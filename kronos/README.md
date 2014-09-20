@@ -117,10 +117,8 @@ on the topic.  Here are what the parameters above mean:
 
   * `hosts` is a list of Cassandra nodes to connect to.
 
-  * `keyspace_prefix` is a prefix that identifies the keys in
-    Cassandra. We typically use it to run `kronos_dev`,
-    `kronos_staging`, and `kronos_production` keyspaces on the same
-    Cassandra cluster.
+  * `keyspace_prefix` is a prefix that is applied to each `KeySpace` Kronos
+    creates. A `KeySpace` is created for each configured `namespace`.
 
   * `replication_factor` is the number of Cassandra nodes to replicate
     each data item to.  Note that this value is set at the
@@ -155,7 +153,57 @@ on the topic.  Here are what the parameters above mean:
 
 ### ElasticSearch
 
-** Under construction---don't use it yet **
+Our ElasticSearch backend is designed to work well with [Kibana](http://www.elasticsearch.org/overview/kibana/).  Here's a sample `storage` configuration:
+
+```python
+storage = {
+  'elasticsearch': {
+    'backend': 'elasticsearch.ElasticSearchStorage',
+    'hosts': [{'host': 'localhost', 'port': 9200}],
+    'index_template': 'kronos_test',
+    'index_prefix': 'kronos_test',
+    'shards': 1,
+    'replicas': 0,
+    'force_refresh': True,
+    'read_size': 10,
+    'rollover_size': 100,
+    'rollover_check_period_seconds': 2
+  }
+}
+```
+
+Our design for the Cassandra backend is heavily influenced by [a great
+blog post with
+illustrations](http://www.datastax.com/dev/blog/advanced-time-series-with-cassandra)
+on the topic.  Here are what the parameters above mean:
+
+  * `hosts` is a list of ElasticSearch nodes to connect to.
+
+  * `index_template` is the name of the [template](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html)
+    Kronos creates in ElasticSearch. This template is applied to all indices
+    Kronos creates and can be found [here](kronos/storage/elasticsearch/index.template).
+
+  * `index_prefix` is a name prefix for all indices Kronos creates.
+
+  * `shards` is the number of shards Kronos creates for each index.
+
+  * `replicas` is the number of replicas Kronos creates for each index.
+
+  * `force_refresh` will flush the index being written to at the end of each
+    `put` request. This shouldn't be enabled for production environments; it
+    probably will hose your ElasticSearch cluster.
+
+  * `read_size` is the [scroll](http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/scan-scroll.html)
+    size when retrieving events from ElasticSearch. It amounts to the number of
+    events fetched from ElasticSearch per request.
+
+  * `rollover_size` is the number of events after which Kronos will create a
+    new index and start writing events into the new index. This size is merely
+    a hint. Kronos periodically checks the number of events in the index it is
+    writing to and rolls it over when the number exceeds `rollover_size`.
+
+  * `rollover_check_period_seconds` is the interval after which a Kronos
+    instance checks to see if the index needs to be rolled over.
 
 ### S3
 
