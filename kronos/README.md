@@ -117,8 +117,8 @@ on the topic.  Here are what the parameters above mean:
 
   * `hosts` is a list of Cassandra nodes to connect to.
 
-  * `keyspace_prefix` is a prefix that is applied to each `KeySpace` Kronos
-    creates. A `KeySpace` is created for each configured `namespace`.
+  * `keyspace_prefix` is a prefix that is applied to each [KeySpace](http://www.datastax.com/documentation/cql/3.0/cql/cql_using/create_keyspace_c.html)
+    Kronos creates. A KeySpace is created for each configured `namespace`.
 
   * `replication_factor` is the number of Cassandra nodes to replicate
     each data item to.  Note that this value is set at the
